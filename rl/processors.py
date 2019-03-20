@@ -44,22 +44,27 @@ class MultiInputProcessor(Processor):
     def handle_dict(self,state_batch):
         """Handles dict-like observations"""
 
+       # names = state_batch[0][0].keys()
+       # ordered_dict = dict()
+       # for key in names:
+       #     dim = len(state_batch[0][0][key].shape)
+       #     order_dim = state_batch.shape
+       #     for dim_count in range(dim):
+       #         order_dim +=    (state_batch[0][0][key].shape[dim_count],)
+       #     order = np.zeros(order_dim)
+
+       #     for idx_state, state in enumerate(state_batch):
+       #         for idx_window in range(state_batch.shape[1]):
+       #             for i in range(order.shape[2]):
+       #                 if not len(state[idx_window]) == self.nb_inputs:
+       #                     raise AssertionError()
+       #                 order[idx_state, idx_window, i] = state_batch[idx_state][idx_window][key][i]
+       #     ordered_dict[key] = order
+
         names = state_batch[0][0].keys()
         ordered_dict = dict()
         for key in names:
-            dim = len(state_batch[0][0][key].shape)
-            order_dim = state_batch.shape
-            for dim_count in range(dim):
-                order_dim = order_dim + (state_batch[0][0][key].shape[dim_count],)
-            order = np.zeros(order_dim)
-
-            for idx_state, state in enumerate(state_batch):
-                for idx_window in range(state_batch.shape[1]):
-                    for i in range(order.shape[2]):
-                        if not len(state[idx_window]) == self.nb_inputs:
-                            raise AssertionError()
-                        order[idx_state, idx_window, i] = state_batch[idx_state][idx_window][key][i]
-            ordered_dict[key] = order
+            ordered_dict[key] = np.expand_dims(state_batch[0][0][key], axis=0)
 
         return ordered_dict
 
